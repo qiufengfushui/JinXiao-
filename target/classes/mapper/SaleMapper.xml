@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.zxt.JinXiaoCun.dao.SaleDao">
+    <insert id="addSale">
+        insert into sale(`price`,`quantity`,`totalPrice`,`userId`,`productId`)
+        values (#{price},#{quantity},#{totalPrice},#{userId},#{productId})
+    </insert>
+    <select id="findSaleAll" resultMap="SaleAllMap">
+        select s.id,price,s.quantity,s.saleDate,s.totalPrice,p.productName,u.readName
+        from sale as s
+        inner join product as p on s.productId = p.id
+        inner join users as u on s.userId = u.id
+        ORDER BY ${orderByName} DESC
+        limit #{pageBean.startIndex},#{pageBean.pageSize}
+    </select>
+    <resultMap id="SaleAllMap" type="Sale">
+        <id property="id" column="id"/>
+        <result property="price" column="price"/>
+        <result property="quantity" column="quantity"/>
+        <result property="totalPrice" column="totalPrice"/>
+        <result property="saleDate" column="saleDate"/>
+        <association property="users" javaType="Users">
+            <result property="readName" column="readName"/>
+        </association>
+        <association property="product" javaType="Product">
+            <result property="productName" column="productName"/>
+        </association>
+    </resultMap>
+    <select id="findSaleAllCount" resultType="int">
+      select count(1) from sale
+    </select>
+</mapper>
